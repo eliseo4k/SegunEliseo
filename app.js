@@ -461,6 +461,31 @@ window.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // Lógica del Botón de Instalación PWA (Integrada)
+    let deferredPrompt;
+    const installAppBtn = document.getElementById('installAppBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installAppBtn) {
+            installAppBtn.classList.remove('hidden');
+        }
+    });
+
+    if (installAppBtn) {
+        installAppBtn.onclick = async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('El usuario aceptó instalar la PWA');
+            }
+            deferredPrompt = null;
+            installAppBtn.classList.add('hidden');
+        };
+    }
+
     // Cargar Datos desde Supabase
     fetchDataFromSupabase();
     checkPromoAlert();
