@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+
+    <link id="dynamicFavicon" rel="icon" type="image/png" href="img/favicon.png">
+
+<!-- Enlazar el Manifest para PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f97316">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SEGÚN ELISEO</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        logo: ['Montserrat', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            orange: '#f97316',
+                            orangeHover: '#ea580c',
+                            orangeLight: 'rgba(249, 115, 22, 0.1)',
+                            gold: '#facc15',
+                            darkBg: '#0f172a',
+                            darkCard: '#1e293b',
+                            darkBorder: '#334155',
+                            green: '#22c55e',
+                            greenHover: '#16a34a',
+                            redTag: '#ef4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome Icons CDN & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Archivo de Estilos Personalizados -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-orange-50/40 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex justify-center items-center h-screen w-screen overflow-hidden sm:py-6 bg-food-pattern">
+
+    <!-- Main Mobile Container (Pantalla Fija) -->
+    <div class="w-full max-w-md h-full sm:h-[850px] sm:max-h-[92vh] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md sm:rounded-3xl sm:shadow-2xl overflow-hidden relative flex flex-col border-gray-200 dark:border-slate-800 transition-colors duration-300">
+        
+        <!-- HEADER NAVIGATION (Fijo) -->
+        <header class="flex items-center justify-between px-5 pt-5 pb-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-20 border-b border-gray-100 dark:border-slate-800/60 flex-shrink-0">
+            <button id="openMenuBtn" class="p-2 rounded-lg text-gray-700 dark:text-slate-200 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors" aria-label="Abrir Menú">
+                <i class="fa-solid fa-bars-staggered text-2xl text-orange-500"></i>
+            </button>
+            
+            <span class="text-xs font-medium text-gray-400 dark:text-slate-500 tracking-tight">Según Eliseo</span>
+            
+            <div class="flex items-center gap-2">
+                <button id="themeToggleBtn" class="w-9 h-9 rounded-full border border-gray-200 dark:border-slate-700 flex items-center justify-center text-amber-500 dark:text-amber-400 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors" title="Cambiar Tema">
+                    <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
+                </button>
+
+                <button id="openSearchBtn" class="w-9 h-9 rounded-full border border-gray-200 dark:border-slate-700 flex items-center justify-center text-gray-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors" aria-label="Buscar">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Bar Drawer (Fijo) -->
+        <div id="searchBarContainer" class="hidden px-5 py-2 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-all duration-300 flex-shrink-0">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="Buscar puesto o plato..." class="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-orange-500 dark:focus:border-orange-500">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 dark:text-slate-500 text-sm"></i>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT CONTAINER -->
+        <main class="flex-1 px-5 pt-2 pb-2 flex flex-col min-h-0 overflow-hidden">
+            
+            <!-- Zona Estática Superior (Fija) -->
+            <div class="flex-shrink-0">
+                <div class="flex justify-center gap-1 text-amber-400 text-lg mb-1 pt-1">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+
+                <div class="text-center mb-3">
+                    <h1 class="font-logo text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white leading-none uppercase">
+                        SEGÚN<br>
+                        <span class="text-4xl sm:text-5xl tracking-normal text-orange-500 dark:text-orange-400">ELISEO</span>
+                    </h1>
+                </div>
+
+                <p class="text-center text-[11px] sm:text-xs text-gray-500 dark:text-slate-400 font-normal leading-relaxed mb-4 px-2">
+                    Aquí vas a encontrar todos los <strong class="text-gray-700 dark:text-slate-200 font-semibold">puestos de comidas</strong> y <strong class="text-gray-700 dark:text-slate-200 font-semibold">restaurantes</strong> que he probado, con su puntuación, contacto y ubicación para que pidas tu coroto.
+                </p>
+
+                <!-- CUSTOM FILTERS SECTION -->
+                <div class="grid grid-cols-2 gap-3 mb-3 relative z-30">
+                    
+                    <!-- CUSTOM CITY DROPDOWN -->
+                    <div class="relative" id="cityDropdownContainer">
+                        <button type="button" id="cityDropdownBtn" class="w-full flex items-center justify-between px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800/90 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all text-xs text-gray-700 dark:text-slate-200 focus:outline-none">
+                            <div class="flex items-center gap-2 truncate pr-1">
+                                <i class="fa-solid fa-location-dot text-orange-500 text-sm"></i>
+                                <span id="selectedCityText" class="font-medium truncate">Elige tu ciudad</span>
+                            </div>
+                            <i id="cityDropdownArrow" class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200"></i>
+                        </button>
+
+                        <div id="cityDropdownMenu" class="dropdown-menu hidden-dropdown absolute left-0 top-full mt-2 w-full bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-xl py-1.5 z-40 max-h-48 overflow-y-auto">
+                            <!-- Generado dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- CUSTOM CATEGORY DROPDOWN -->
+                    <div class="relative" id="foodDropdownContainer">
+                        <button type="button" id="foodDropdownBtn" class="w-full flex items-center justify-between px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800/90 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all text-xs text-gray-700 dark:text-slate-200 focus:outline-none">
+                            <div class="flex items-center gap-2 truncate pr-1">
+                                <i class="fa-solid fa-utensils text-orange-500 text-sm"></i>
+                                <span id="selectedFoodText" class="font-medium truncate">Elige la comida</span>
+                            </div>
+                            <i id="foodDropdownArrow" class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200"></i>
+                        </button>
+
+                        <div id="foodDropdownMenu" class="dropdown-menu hidden-dropdown absolute left-0 top-full mt-2 w-full bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-xl py-1.5 z-40 max-h-48 overflow-y-auto">
+                            <!-- Generado dinámicamente -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Food Stands Dynamic Container (ÚNICA ZONA CON SCROLL) -->
+            <div id="cardsListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 pb-2 relative z-10"></div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-8">
+                <i class="fa-solid fa-burger text-4xl text-gray-300 dark:text-slate-700 mb-2"></i>
+                <p class="text-xs font-medium text-gray-500 dark:text-slate-400">No se encontraron puestos con estos filtros.</p>
+                <button id="resetFiltersBtn" class="mt-2 text-xs text-orange-500 font-semibold underline hover:text-orange-600">Restablecer filtros</button>
+            </div>
+
+        </main>
+        
+        <!-- FOOTER (Fijo) -->
+        <footer class="py-2.5 text-center border-t border-gray-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md text-[11px] text-gray-400 dark:text-slate-600 flex-shrink-0">
+            © 2026 Según Eliseo • Todos los derechos reservados
+        </footer>
+
+        <!-- SIDEBAR MENU DRAWER -->
+        <div id="sidebarBackdrop" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 hidden transition-opacity duration-300"></div>
+        <aside id="sidebarDrawer" class="fixed top-0 left-0 h-full w-64 bg-white dark:bg-slate-900 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out p-6 shadow-2xl flex flex-col justify-between border-r border-gray-100 dark:border-slate-800">
+            <div>
+                <div class="flex justify-end mb-6">
+                    <button id="closeMenuBtn" class="text-gray-400 hover:text-gray-700 dark:text-slate-400 dark:hover:text-white text-xl p-1">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <nav class="space-y-6">
+                    <a href="index.html" class="block font-bold text-orange-500 dark:text-orange-400 text-lg border-b-2 border-orange-500 dark:border-orange-400 pb-1 w-fit">Inicio</a>
+                    <a href="sobre-nosotros.html" class="block font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors">Sobre nosotros</a>
+                    <a href="contacto.html" class="block font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors">Contáctame</a>
+                </nav>
+            </div>
+
+            <div class="text-xs text-gray-400 dark:text-slate-500">
+                <p class="font-medium text-gray-600 dark:text-slate-400 mb-1">Según Eliseo App</p>
+                <p>Versión 2.1.0</p>
+            </div>
+        </aside>
+
+        <!-- DETAIL POPUP MODAL -->
+        <div id="modalBackdrop" class="fixed inset-0 bg-black/75 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 transition-opacity duration-200">
+            <div id="modalCard" class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative transform scale-95 opacity-0 transition-all duration-300 p-5 border border-gray-100 dark:border-slate-800 max-h-[90vh] overflow-y-auto">
+                <button id="closeModalBtn" class="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+
+                <div class="relative w-full h-52 rounded-2xl overflow-hidden mb-4 bg-slate-800">
+                    <img id="modalImg" src="" alt="Food Cart Detail" class="w-full h-full object-cover">
+                </div>
+
+                <div>
+                    <div class="flex items-start justify-between mb-0.5">
+                        <h2 id="modalTitle" class="text-xl font-bold text-gray-900 dark:text-white leading-snug"></h2>
+                        <div id="modalStars" class="flex text-amber-400 text-xs gap-0.5 pt-1"></div>
+                    </div>
+
+                    <p id="modalCategory" class="text-xs text-gray-400 dark:text-slate-500 mb-3"></p>
+                    <p id="modalDescription" class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed mb-4"></p>
+
+                    <p class="text-[11px] text-gray-400 dark:text-slate-500 italic mb-4">
+                        La puntuación es dada según la degustación de <strong class="text-gray-700 dark:text-slate-300 font-semibold not-italic">Eliseo Romero</strong>.
+                    </p>
+
+                    <hr class="border-gray-100 dark:border-slate-800 mb-4">
+
+                    <div class="space-y-2 mb-5 text-xs text-gray-600 dark:text-slate-300">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-phone text-emerald-500 dark:text-emerald-400 text-sm w-4"></i>
+                            <span id="modalPhone" class="font-medium"></span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-location-dot text-emerald-500 dark:text-emerald-400 text-sm w-4 mt-0.5"></i>
+                            <span id="modalAddress" class="text-gray-500 dark:text-slate-400"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 mb-5">
+                        <a id="modalInstagram" href="#" target="_blank" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-200 flex items-center justify-center text-xs hover:bg-orange-100 dark:hover:bg-slate-700 transition-colors">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a id="modalTiktok" href="#" target="_blank" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-200 flex items-center justify-center text-xs hover:bg-orange-100 dark:hover:bg-slate-700 transition-colors">
+                             <i class="fa-brands fa-tiktok"></i>
+                        </a>
+                    </div>
+
+                    <a id="modalMapsBtn" href="#" target="_blank" class="w-full bg-emerald-400 hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-gray-950 font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md shadow-emerald-500/20 transition-all">
+                        <i class="fa-solid fa-location-dot text-emerald-950"></i>
+                        <span>Google Maps</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALERTA PROMOCIONAL / FESTIVA INICIAL -->
+        <div id="promoAlertBackdrop" class="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-5 border border-orange-500/30 text-center space-y-3 max-h-[90vh] overflow-y-auto">
+                <button id="closePromoAlertBtn" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/80 transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <!-- Contenedor adaptado a 1080x1350 (Aspect Ratio 4:5) que se adapta perfectamente en móviles y PC -->
+                <div id="promoImageContainer" class="hidden w-full aspect-[4/5] rounded-2xl overflow-hidden bg-slate-800 mb-2 relative">
+                    <img id="promoImage" src="" class="w-full h-full object-cover">
+                </div>
+                <h3 id="promoTitle" class="font-bold text-lg text-gray-900 dark:text-white pt-1"></h3>
+                <p id="promoMessage" class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed"></p>
+                <button id="acceptPromoBtn" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs shadow-md shadow-orange-500/20 transition-all">
+                    Entendido
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Carga de scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("Service Worker registrado con éxito."))
+        .catch((err) => console.log("Error al registrar Service Worker:", err));
+    });
+  }
+</script>
+</body>
+</html>
