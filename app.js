@@ -490,3 +490,27 @@ window.addEventListener('DOMContentLoaded', () => {
     fetchDataFromSupabase();
     checkPromoAlert();
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const refreshBtn = document.getElementById('refreshBtn');
+    const refreshIcon = document.getElementById('refreshIcon');
+
+    if (refreshBtn && refreshIcon) {
+        refreshBtn.addEventListener('click', async () => {
+            // Añadir animación de rotación al ícono
+            refreshIcon.classList.add('fa-spin');
+            
+            // Volver a cargar los datos desde Supabase y refrescar la vista actual
+            if (typeof fetchDataFromSupabase === 'function') {
+                await fetchDataFromSupabase();
+            } else {
+                window.location.reload(); // Fallback por si prefieres recargar la app completa
+            }
+
+            // Quitar la animación después de medio segundo
+            setTimeout(() => {
+                refreshIcon.classList.remove('fa-spin');
+            }, 600);
+        });
+    }
+});
