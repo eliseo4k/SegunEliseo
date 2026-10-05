@@ -793,22 +793,19 @@ async function loadPromoAlertAdmin() {
     }
 
     if (promo) {
-        // Cargar estado del switch, título y mensaje
         if (document.getElementById('alertActive')) document.getElementById('alertActive').checked = promo.active || false;
         if (document.getElementById('alertTitle')) document.getElementById('alertTitle').value = promo.title || '';
         if (document.getElementById('alertMessage')) document.getElementById('alertMessage').value = promo.message || '';
         
-        // Mantener la URL en el input oculto o de texto para que no se pierda al guardar
         const alertImageInput = document.getElementById('alertImage');
         if (alertImageInput) {
             alertImageInput.value = promo.image || '';
         }
 
-        // MOSTRAR LA MINIATURA DE LA IMAGEN ACTUAL
-        const previewContainer = document.getElementById('alertImagePreview'); // Ajusta este ID según tu HTML si es diferente
+        const previewContainer = document.getElementById('alertImagePreview');
         if (previewContainer && promo.image) {
             previewContainer.src = promo.image;
-            previewContainer.style.display = 'block'; // Asegurarse de que sea visible
+            previewContainer.style.display = 'block';
         }
     }
 }
@@ -819,7 +816,6 @@ if (saveAlertBtn) {
         const imageFileInput = document.getElementById('alertImageFile');
         let imageUrl = document.getElementById('alertImage')?.value.trim() || '';
 
-        // Comprobación estricta de si hay un archivo NUEVO seleccionado
         const hasNewFile = imageFileInput && imageFileInput.files && imageFileInput.files.length > 0 && imageFileInput.files[0] instanceof File;
 
         if (hasNewFile) {
@@ -827,7 +823,6 @@ if (saveAlertBtn) {
             const fileExt = file.name.split('.').pop();
             const fileName = `promo_${Date.now()}.${fileExt}`;
             
-            console.log('Subiendo nueva imagen al Storage...');
             const { error: uploadError } = await supabaseClient.storage
                 .from('food-images')
                 .upload(fileName, file);
@@ -842,11 +837,7 @@ if (saveAlertBtn) {
                 .getPublicUrl(fileName);
 
             imageUrl = publicURLData.publicUrl;
-
-            // Limpiamos el input file para que no vuelva a reutilizar este archivo en el próximo clic
             imageFileInput.value = ''; 
-        } else {
-            console.log('No se seleccionó archivo nuevo, usando la imagen existente.');
         }
 
         const alertData = {

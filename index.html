@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
-
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 <link rel="apple-touch-icon" href="img/favicon.png">
 
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js')
-            .then((reg) => console.log('Service Worker registrado con éxito', reg))
-            .catch((err) => console.log('Error al registrar Service Worker', err));
-        });
-      }
-    </script>
-    
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then((reg) => console.log('Service Worker registrado con éxito', reg))
+        .catch((err) => console.log('Error al registrar Service Worker', err));
+    });
+  }
+</script>
+
     <link id="dynamicFavicon" rel="icon" type="image/png" href="img/favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -70,7 +68,7 @@
                 <i class="fa-solid fa-bars-staggered text-2xl text-orange-500"></i>
             </button>
             
-            <span class="text-xs font-medium text-gray-400 dark:text-slate-500 tracking-tight">Según Eliseo</span>
+            <span id="headerTitle" class="text-xs font-medium text-gray-400 dark:text-slate-500 tracking-tight">Según Eliseo</span>
             
             <div class="flex items-center gap-2">
                 <button id="themeToggleBtn" class="w-9 h-9 rounded-full border border-gray-200 dark:border-slate-700 flex items-center justify-center text-amber-500 dark:text-amber-400 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors" title="Cambiar Tema">
@@ -83,7 +81,7 @@
             </div>
         </header>
 
-        <!-- Search Bar Drawer (Fijo) -->
+        <!-- Search Bar Drawer (Fijo para la vista de Inicio) -->
         <div id="searchBarContainer" class="hidden px-5 py-2 bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 transition-all duration-300 flex-shrink-0">
             <div class="relative">
                 <input type="text" id="searchInput" placeholder="Buscar puesto o plato..." class="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-slate-800 text-gray-800 dark:text-slate-100 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-orange-500 dark:focus:border-orange-500">
@@ -91,74 +89,203 @@
             </div>
         </div>
 
-        <!-- MAIN CONTENT CONTAINER -->
-        <main class="flex-1 px-5 pt-2 pb-2 flex flex-col min-h-0 overflow-hidden">
+        <!-- MAIN CONTENT CONTAINER (Vistas Unificadas) -->
+        <main class="flex-1 overflow-hidden flex flex-col min-h-0 relative">
             
-            <!-- Zona Estática Superior (Fija) -->
-            <div class="flex-shrink-0">
-                <div class="flex justify-center gap-1 text-amber-400 text-lg mb-1 pt-1">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                </div>
+            <!-- ================= VISTA 1: INICIO ================= -->
+            <div id="view-index" class="app-view flex-1 px-5 pt-2 pb-2 flex flex-col min-h-0 overflow-hidden">
+                <div class="flex-shrink-0">
+                    <div class="flex justify-center gap-1 text-amber-400 text-lg mb-1 pt-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="text-center mb-3">
+                        <h1 class="font-logo text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white leading-none uppercase">
+                            SEGÚN<br>
+                            <span class="text-4xl sm:text-5xl tracking-normal text-orange-500 dark:text-orange-400">ELISEO</span>
+                        </h1>
+                    </div>
+                    <p class="text-center text-[11px] sm:text-xs text-gray-500 dark:text-slate-400 font-normal leading-relaxed mb-4 px-2">
+                        Aquí vas a encontrar todos los <strong class="text-gray-700 dark:text-slate-200 font-semibold">puestos de comidas</strong> y <strong class="text-gray-700 dark:text-slate-200 font-semibold">restaurantes</strong> que he probado, con su puntuación, contacto y ubicación para que pidas tu coroto.
+                    </p>
 
-                <div class="text-center mb-3">
-                    <h1 class="font-logo text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white leading-none uppercase">
-                        SEGÚN<br>
-                        <span class="text-4xl sm:text-5xl tracking-normal text-orange-500 dark:text-orange-400">ELISEO</span>
-                    </h1>
-                </div>
+                    <!-- CUSTOM FILTERS SECTION -->
+                    <div class="grid grid-cols-2 gap-3 mb-3 relative z-30">
+                        <div class="relative" id="cityDropdownContainer">
+                            <button type="button" id="cityDropdownBtn" class="w-full flex items-center justify-between px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800/90 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all text-xs text-gray-700 dark:text-slate-200 focus:outline-none">
+                                <div class="flex items-center gap-2 truncate pr-1">
+                                    <i class="fa-solid fa-location-dot text-orange-500 text-sm"></i>
+                                    <span id="selectedCityText" class="font-medium truncate">Elige tu ciudad</span>
+                                </div>
+                                <i id="cityDropdownArrow" class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200"></i>
+                            </button>
+                            <div id="cityDropdownMenu" class="dropdown-menu hidden-dropdown absolute left-0 top-full mt-2 w-full bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-xl py-1.5 z-40 max-h-48 overflow-y-auto"></div>
+                        </div>
 
-                <p class="text-center text-[11px] sm:text-xs text-gray-500 dark:text-slate-400 font-normal leading-relaxed mb-4 px-2">
-                    Aquí vas a encontrar todos los <strong class="text-gray-700 dark:text-slate-200 font-semibold">puestos de comidas</strong> y <strong class="text-gray-700 dark:text-slate-200 font-semibold">restaurantes</strong> que he probado, con su puntuación, contacto y ubicación para que pidas tu coroto.
-                </p>
-
-                <!-- CUSTOM FILTERS SECTION -->
-                <div class="grid grid-cols-2 gap-3 mb-3 relative z-30">
-                    
-                    <!-- CUSTOM CITY DROPDOWN -->
-                    <div class="relative" id="cityDropdownContainer">
-                        <button type="button" id="cityDropdownBtn" class="w-full flex items-center justify-between px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800/90 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all text-xs text-gray-700 dark:text-slate-200 focus:outline-none">
-                            <div class="flex items-center gap-2 truncate pr-1">
-                                <i class="fa-solid fa-location-dot text-orange-500 text-sm"></i>
-                                <span id="selectedCityText" class="font-medium truncate">Elige tu ciudad</span>
-                            </div>
-                            <i id="cityDropdownArrow" class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200"></i>
-                        </button>
-
-                        <div id="cityDropdownMenu" class="dropdown-menu hidden-dropdown absolute left-0 top-full mt-2 w-full bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-xl py-1.5 z-40 max-h-48 overflow-y-auto">
-                            <!-- Generado dinámicamente -->
+                        <div class="relative" id="foodDropdownContainer">
+                            <button type="button" id="foodDropdownBtn" class="w-full flex items-center justify-between px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800/90 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all text-xs text-gray-700 dark:text-slate-200 focus:outline-none">
+                                <div class="flex items-center gap-2 truncate pr-1">
+                                    <i class="fa-solid fa-utensils text-orange-500 text-sm"></i>
+                                    <span id="selectedFoodText" class="font-medium truncate">Elige la comida</span>
+                                </div>
+                                <i id="foodDropdownArrow" class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200"></i>
+                            </button>
+                            <div id="foodDropdownMenu" class="dropdown-menu hidden-dropdown absolute left-0 top-full mt-2 w-full bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-xl py-1.5 z-40 max-h-48 overflow-y-auto"></div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- CUSTOM CATEGORY DROPDOWN -->
-                    <div class="relative" id="foodDropdownContainer">
-                        <button type="button" id="foodDropdownBtn" class="w-full flex items-center justify-between px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800/90 shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all text-xs text-gray-700 dark:text-slate-200 focus:outline-none">
-                            <div class="flex items-center gap-2 truncate pr-1">
-                                <i class="fa-solid fa-utensils text-orange-500 text-sm"></i>
-                                <span id="selectedFoodText" class="font-medium truncate">Elige la comida</span>
-                            </div>
-                            <i id="foodDropdownArrow" class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200"></i>
-                        </button>
+                <div id="cardsListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 pb-2 relative z-10"></div>
 
-                        <div id="foodDropdownMenu" class="dropdown-menu hidden-dropdown absolute left-0 top-full mt-2 w-full bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-xl py-1.5 z-40 max-h-48 overflow-y-auto">
-                            <!-- Generado dinámicamente -->
-                        </div>
-                    </div>
-
+                <div id="emptyState" class="hidden text-center py-8">
+                    <i class="fa-solid fa-burger text-4xl text-gray-300 dark:text-slate-700 mb-2"></i>
+                    <p class="text-xs font-medium text-gray-500 dark:text-slate-400">No se encontraron puestos con estos filtros.</p>
+                    <button id="resetFiltersBtn" class="mt-2 text-xs text-orange-500 font-semibold underline hover:text-orange-600">Restablecer filtros</button>
                 </div>
             </div>
 
-            <!-- Food Stands Dynamic Container (ÚNICA ZONA CON SCROLL) -->
-            <div id="cardsListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 pb-2 relative z-10"></div>
+            <!-- ================= VISTA 2: SOBRE NOSOTROS ================= -->
+            <div id="view-sobre-nosotros" class="app-view hidden flex-1 overflow-y-auto min-h-0 px-5 pt-4 pb-6 space-y-5 pr-2">
+                <div class="relative w-full h-40 rounded-2xl overflow-hidden bg-slate-800 border border-gray-100 dark:border-slate-700/80 shadow-md flex-shrink-0">
+                    <img src="img/banner1.jpg" alt="Banner Sobre Nosotros" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end p-4">
+                        <span class="text-white text-xs font-semibold bg-orange-500/90 backdrop-blur-md px-3 py-1 rounded-full">
+                            <i class="fa-solid fa-utensils mr-1"></i> Probando todo tipo de comida
+                        </span>
+                    </div>
+                </div>
 
-            <!-- Empty State -->
-            <div id="emptyState" class="hidden text-center py-8">
-                <i class="fa-solid fa-burger text-4xl text-gray-300 dark:text-slate-700 mb-2"></i>
-                <p class="text-xs font-medium text-gray-500 dark:text-slate-400">No se encontraron puestos con estos filtros.</p>
-                <button id="resetFiltersBtn" class="mt-2 text-xs text-orange-500 font-semibold underline hover:text-orange-600">Restablecer filtros</button>
+                <div class="text-center">
+                    <h1 class="font-logo text-3xl font-black tracking-tight text-gray-900 dark:text-white uppercase leading-tight">
+                        SOBRE <span class="text-orange-500 dark:text-orange-400">NOSOTROS</span>
+                    </h1>
+                    <p class="text-xs text-gray-400 dark:text-slate-500 mt-0.5">Conoce de qué trata esta aplicación</p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800/90 border border-gray-100 dark:border-slate-700/80 rounded-2xl p-4 shadow-sm space-y-3 text-xs leading-relaxed text-gray-600 dark:text-slate-300">
+                    <p class="flex items-start gap-2">
+                        <i class="fa-solid fa-quote-left text-orange-500 text-sm flex-shrink-0 mt-0.5"></i>
+                        <span>Esta es una aplicación donde podrás conseguir todos los puestos de comida rápida, comida lenta, comida floja, restaurantes, heladerías y todo lo que tenga que ver con comer.</span>
+                    </p>
+                    <p>
+                        Aquí vas a ver todos los sitios que el lambucio de <strong class="text-gray-900 dark:text-white font-bold">Eliseo4k</strong> ha probado y lo mejor de todo que aquí verás su calificación, así que Eliseo será muy sincero a la hora de colocar estrellas, para que al momento de visitar uno de estos sitios tengas idea de que tan buena es la comida.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 py-1">
+                    <div class="bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 rounded-2xl p-3 text-center">
+                        <i class="fa-solid fa-store text-orange-500 text-lg mb-1"></i>
+                        <p class="font-bold text-gray-900 dark:text-white text-sm">100%</p>
+                        <p class="text-[10px] text-gray-500 dark:text-slate-400">Real</p>
+                    </div>
+                    <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-2xl p-3 text-center">
+                        <i class="fa-solid fa-star text-amber-500 text-lg mb-1"></i>
+                        <p class="font-bold text-gray-900 dark:text-white text-sm">1 a 5</p>
+                        <p class="text-[10px] text-gray-500 dark:text-slate-400">Estrellas</p>
+                    </div>
+                    <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-3 text-center">
+                        <i class="fa-solid fa-face-laugh-beam text-emerald-500 text-lg mb-1"></i>
+                        <p class="font-bold text-gray-900 dark:text-white text-sm">Sincero</p>
+                        <p class="text-[10px] text-gray-500 dark:text-slate-400">Sin filtro</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800/90 border border-gray-100 dark:border-slate-700/80 rounded-2xl p-4 shadow-sm">
+                    <h3 class="font-bold text-xs text-gray-900 dark:text-white mb-3 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-medal text-orange-500"></i> ¿Cómo puntuamos los sitios?
+                    </h3>
+                    <ul class="space-y-2 text-[11px] text-gray-600 dark:text-slate-300">
+                        <li class="flex items-center gap-2">
+                            <span class="text-amber-400 font-bold w-12 flex-shrink-0">5 <i class="fa-solid fa-star text-[10px]"></i></span>
+                            <span>Comida increíble, vale totalmente el dinero.</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-amber-400 font-bold w-12 flex-shrink-0">3-4 <i class="fa-solid fa-star text-[10px]"></i></span>
+                            <span>Resuelve el antojo y tiene buen sabor.</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-amber-400 font-bold w-12 flex-shrink-0">1-2 <i class="fa-solid fa-star text-[10px]"></i></span>
+                            <span>Hay cosas que mejorar, criterio estricto.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <button onclick="switchView('index')" class="w-full py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold rounded-2xl text-xs text-center shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-burger"></i>
+                    <span>Ver Todos los Puestos de Comida</span>
+                </button>
+            </div>
+
+            <!-- ================= VISTA 3: CONTÁCTAME ================= -->
+            <div id="view-contacto" class="app-view hidden flex-1 overflow-y-auto min-h-0 px-5 pt-5 pb-6 flex flex-col justify-between pr-2">
+                <div>
+                    <div class="text-center mb-5">
+                        <h1 class="font-logo text-3xl font-black tracking-tight text-gray-900 dark:text-white uppercase">
+                            CONTÁC<span class="text-orange-500 dark:text-orange-400">TAME</span>
+                        </h1>
+                        <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">¿Tienes alguna recomendación de puesto o propuesta?</p>
+                    </div>
+
+                    <div class="flex flex-col items-center mb-5">
+                        <div class="relative w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-orange-500 to-amber-400 shadow-lg shadow-orange-500/20 mb-3">
+                            <img src="img/perfil1.jpeg" alt="Foto de Perfil" id="displayProfileImg" class="w-full h-full object-cover rounded-full border-2 border-white dark:border-slate-900 bg-slate-800">
+                        </div>
+                        <h2 id="displayProfileName" class="font-bold text-lg text-gray-900 dark:text-white">Eliseo Romero</h2>
+                        <span id="displayProfileRole" class="text-xs font-medium text-orange-500 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-500/20 mt-1">Creador de Contenido</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <a id="displayEmailLink" href="mailto:eliseoejrm@gmail.com" class="flex items-center justify-between p-3.5 bg-white dark:bg-slate-800/90 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-sm hover:border-orange-400 dark:hover:border-orange-500 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-500/10 text-orange-500 flex items-center justify-center text-lg flex-shrink-0">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-gray-400 dark:text-slate-400 font-medium uppercase tracking-wider">Correo Electrónico</p>
+                                    <p id="displayEmailText" class="text-xs font-semibold text-gray-800 dark:text-slate-100 group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors">eliseoejrm@gmail.com</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-400 group-hover:text-orange-500 transition-colors"></i>
+                        </a>
+
+                        <a id="displayPhoneLink" href="https://wa.me/584149809111?s=p" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3.5 bg-white dark:bg-slate-800/90 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-sm hover:border-emerald-400 dark:hover:border-emerald-500 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg flex-shrink-0">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-gray-400 dark:text-slate-400 font-medium uppercase tracking-wider">Teléfono / WhatsApp</p>
+                                    <p id="displayPhoneText" class="text-xs font-semibold text-gray-800 dark:text-slate-100 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">0414-9809111</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-400 group-hover:text-emerald-500 transition-colors"></i>
+                        </a>
+
+                        <div class="p-4 bg-white dark:bg-slate-800/90 border border-gray-100 dark:border-slate-700/80 rounded-2xl shadow-sm">
+                            <p id="displayHandleText" class="text-[10px] text-gray-400 dark:text-slate-400 font-medium uppercase tracking-wider mb-3">Redes Sociales (@Eliseo4k)</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <a id="displayInstagramLink" href="https://instagram.com/Eliseo4k" target="_blank" class="flex items-center justify-center gap-2 p-2.5 bg-gray-50 dark:bg-slate-700/50 hover:bg-pink-50 dark:hover:bg-pink-500/10 border border-gray-100 dark:border-slate-600/50 rounded-xl text-xs font-semibold text-gray-700 dark:text-slate-200 hover:text-pink-500 dark:hover:text-pink-400 transition-all">
+                                    <i class="fa-brands fa-instagram text-base text-pink-500"></i>
+                                    <span>Instagram</span>
+                                </a>
+                                <a id="displayTiktokLink" href="https://tiktok.com/@Eliseo4k" target="_blank" class="flex items-center justify-center gap-2 p-2.5 bg-gray-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-600/50 border border-gray-100 dark:border-slate-600/50 rounded-xl text-xs font-semibold text-gray-700 dark:text-slate-200 transition-all">
+                                    <i class="fa-brands fa-tiktok text-base text-gray-900 dark:text-white"></i>
+                                    <span>TikTok</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 bg-orange-50/60 dark:bg-orange-500/10 border border-orange-200/80 dark:border-orange-500/20 rounded-2xl text-center">
+                            <p class="text-xs text-gray-700 dark:text-slate-300 leading-relaxed">
+                                Si quieres que visite tu local y aparecer en <strong class="text-orange-600 dark:text-orange-400 font-bold">SegunEliseo.com</strong>, escríbeme al whatsapp
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="switchView('index')" class="mt-6 w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs text-center shadow-md shadow-orange-500/20 transition-all flex items-center justify-center gap-2 flex-shrink-0">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver al Inicio</span>
+                </button>
             </div>
 
         </main>
@@ -168,7 +295,7 @@
             © 2026 Según Eliseo • Todos los derechos reservados
         </footer>
 
-        <!-- SIDEBAR MENU DRAWER -->
+        <!-- SIDEBAR MENU DRAWER (Control de vistas unificadas) -->
         <div id="sidebarBackdrop" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 hidden transition-opacity duration-300"></div>
         <aside id="sidebarDrawer" class="fixed top-0 left-0 h-full w-64 bg-white dark:bg-slate-900 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out p-6 shadow-2xl flex flex-col justify-between border-r border-gray-100 dark:border-slate-800">
             <div>
@@ -179,11 +306,10 @@
                 </div>
 
                 <nav class="space-y-4">
-                    <a href="index.html" class="block font-bold text-orange-500 dark:text-orange-400 text-lg border-b-2 border-orange-500 dark:border-orange-400 pb-1 w-fit">Inicio</a>
-                    <a href="sobre-nosotros.html" class="block font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors">Sobre nosotros</a>
-                    <a href="contacto.html" class="block font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors">Contáctame</a>
+                    <button onclick="switchView('index'); closeSidebar();" id="nav-index" class="block w-full text-left font-bold text-orange-500 dark:text-orange-400 text-lg border-b-2 border-orange-500 dark:border-orange-400 pb-1">Inicio</button>
+                    <button onclick="switchView('sobre-nosotros'); closeSidebar();" id="nav-sobre-nosotros" class="block w-full text-left font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors">Sobre nosotros</button>
+                    <button onclick="switchView('contacto'); closeSidebar();" id="nav-contacto" class="block w-full text-left font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors">Contáctame</button>
                     
-                    <!-- Botón de Descarga App integrado en el menú -->
                     <button id="installAppBtn" class="hidden w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-gray-700 dark:text-slate-200 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors text-left mt-2">
                         <i class="fa-solid fa-download text-orange-500 text-sm"></i> Descargar App
                     </button>
@@ -250,7 +376,7 @@
             </div>
         </div>
 
-        <!-- ALERTA PROMOCIONAL / FESTIVA INICIAL -->
+        <!-- ALERTA PROMOCIONAL INICIAL -->
         <div id="promoAlertBackdrop" class="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
             <div class="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl relative p-5 border border-orange-500/30 text-center space-y-3 max-h-[90vh] overflow-y-auto">
                 <button id="closePromoAlertBtn" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/80 transition-colors">
@@ -268,6 +394,73 @@
         </div>
 
     </div>
+
+    <!-- Script para alternar vistas internas -->
+    <script>
+        function switchView(viewName) {
+            document.querySelectorAll('.app-view').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(`view-${viewName}`);
+            if (target) target.classList.remove('hidden');
+
+            // Actualizar título del header superior y estilos del menú
+            const headerTitle = document.getElementById('headerTitle');
+            ['index', 'sobre-nosotros', 'contacto'].forEach(name => {
+                const navBtn = document.getElementById(`nav-${name}`);
+                if (navBtn) {
+                    if (name === viewName) {
+                        navBtn.className = "block w-full text-left font-bold text-orange-500 dark:text-orange-400 text-lg border-b-2 border-orange-500 dark:border-orange-400 pb-1";
+                    } else {
+                        navBtn.className = "block w-full text-left font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors";
+                    }
+                }
+            });
+
+            if (headerTitle) {
+                if (viewName === 'index') headerTitle.textContent = 'Según Eliseo';
+                if (viewName === 'sobre-nosotros') headerTitle.textContent = 'Sobre nosotros';
+                if (viewName === 'contacto') headerTitle.textContent = 'Contáctame';
+            }
+
+            // Ocultar buscador si se cambia de vista
+            const searchBarContainer = document.getElementById('searchBarContainer');
+            if (searchBarContainer && viewName !== 'index') {
+                searchBarContainer.classList.add('hidden');
+            }
+            
+            // Cargar datos de perfil si entra a contacto
+            if (viewName === 'contacto' && typeof loadContactProfile === 'function') {
+                loadContactProfile();
+            }
+        }
+
+        function loadContactProfile() {
+            const rawProfile = localStorage.getItem('PROFILE_DATA');
+            const profile = rawProfile ? JSON.parse(rawProfile) : (typeof DEFAULT_PROFILE_DATA !== 'undefined' ? DEFAULT_PROFILE_DATA : null);
+            if (!profile) return;
+
+            const displayProfileImg = document.getElementById('displayProfileImg');
+            const displayProfileName = document.getElementById('displayProfileName');
+            const displayProfileRole = document.getElementById('displayProfileRole');
+            const displayEmailLink = document.getElementById('displayEmailLink');
+            const displayEmailText = document.getElementById('displayEmailText');
+            const displayPhoneLink = document.getElementById('displayPhoneLink');
+            const displayPhoneText = document.getElementById('displayPhoneText');
+            const displayHandleText = document.getElementById('displayHandleText');
+            const displayInstagramLink = document.getElementById('displayInstagramLink');
+            const displayTiktokLink = document.getElementById('displayTiktokLink');
+
+            if (displayProfileImg && profile.image) displayProfileImg.src = profile.image;
+            if (displayProfileName && profile.name) displayProfileName.textContent = profile.name;
+            if (displayProfileRole && profile.role) displayProfileRole.textContent = profile.role;
+            if (displayEmailText && profile.email) displayEmailText.textContent = profile.email;
+            if (displayEmailLink && profile.email) displayEmailLink.href = `mailto:${profile.email}`;
+            if (displayPhoneText && profile.phone) displayPhoneText.textContent = profile.phone;
+            if (displayPhoneLink && profile.whatsappLink) displayPhoneLink.href = profile.whatsappLink;
+            if (displayHandleText && profile.handle) displayHandleText.textContent = `Redes Sociales (${profile.handle})`;
+            if (displayInstagramLink && profile.instagram) displayInstagramLink.href = profile.instagram;
+            if (displayTiktokLink && profile.tiktok) displayTiktokLink.href = profile.tiktok;
+        }
+    </script>
 
     <!-- Carga de scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
