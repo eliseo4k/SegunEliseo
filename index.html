@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
-
-    <link id="dynamicFavicon" rel="icon" type="image/png" href="img/favicon.png">
-
-<!-- Enlazar el Manifest para PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f97316">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SEGÚN ELISEO</title>
+    
+    <link id="dynamicFavicon" rel="icon" type="image/png" href="img/favicon.png">
+
+    <!-- Enlazar el Manifest para PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#f97316">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -103,9 +102,17 @@
                     </h1>
                 </div>
 
-                <p class="text-center text-[11px] sm:text-xs text-gray-500 dark:text-slate-400 font-normal leading-relaxed mb-4 px-2">
-                    Aquí vas a encontrar todos los <strong class="text-gray-700 dark:text-slate-200 font-semibold">puestos de comidas</strong> y <strong class="text-gray-700 dark:text-slate-200 font-semibold">restaurantes</strong> que he probado, con su puntuación, contacto y ubicación para que pidas tu coroto.
+                <p class="text-center text-[11px] sm:text-xs text-gray-500 dark:text-slate-400 font-normal leading-relaxed mb-3 px-2">
+                    Aquí vas a encontrar todos los <strong class="text-gray-700 dark:text-slate-200 font-semibold">puestos de comidas</strong> y <strong class="text-gray-700 dark:text-slate-200 font-semibold">restaurantes</strong> que he probado, con su puntuación, contacto y ubicación.
                 </p>
+
+                <!-- BOTÓN DE INSTALACIÓN PWA (Visible solo cuando el navegador lo permite) -->
+                <div class="flex justify-center mb-3">
+                    <button id="btnInstalar" style="display: none;" class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-md shadow-orange-500/20 transition-all items-center gap-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>¡Instalar Aplicación!</span>
+                    </button>
+                </div>
 
                 <!-- CUSTOM FILTERS SECTION -->
                 <div class="grid grid-cols-2 gap-3 mb-3 relative z-30">
@@ -174,9 +181,6 @@
                     <a href="index.html" class="block font-bold text-orange-500 dark:text-orange-400 text-lg border-b-2 border-orange-500 dark:border-orange-400 pb-1 w-fit">Inicio</a>
                     <a href="sobre-nosotros.html" class="block font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors">Sobre nosotros</a>
                     <a href="contacto.html" class="block font-normal text-gray-600 dark:text-slate-300 hover:text-orange-500 dark:hover:text-orange-400 text-base transition-colors">Contáctame</a>
-                    <button id="btnInstalar" style="display: none; background-color: #f97316; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; align-items: center; gap: 8px; margin: 10px auto;">
-  📲 ¡Instalar Aplicación!
-</button>
                 </nav>
             </div>
 
@@ -246,7 +250,6 @@
                 <button id="closePromoAlertBtn" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/80 transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
-                <!-- Contenedor adaptado a 1080x1350 (Aspect Ratio 4:5) que se adapta perfectamente en móviles y PC -->
                 <div id="promoImageContainer" class="hidden w-full aspect-[4/5] rounded-2xl overflow-hidden bg-slate-800 mb-2 relative">
                     <img id="promoImage" src="" class="w-full h-full object-cover">
                 </div>
@@ -264,14 +267,46 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="data.js"></script>
     <script src="app.js"></script>
-    <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log("Service Worker registrado con éxito."))
-        .catch((err) => console.log("Error al registrar Service Worker:", err));
+    
+    <!-- Script de PWA y lógica del botón de instalación -->
+<script>
+    let deferredPrompt;
+    const btnInstalar = document.getElementById('btnInstalar');
+
+    // Captura el evento nativo si el navegador lo permite
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (btnInstalar) {
+            btnInstalar.style.display = 'flex';
+        }
     });
-  }
+
+    // MODO PRUEBA: Forzar el despliegue del botón siempre para desarrollo
+    if (btnInstalar) {
+        btnInstalar.style.display = 'flex';
+        
+        btnInstalar.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('El usuario aceptó instalar la PWA');
+                }
+                deferredPrompt = null;
+            } else {
+                alert("Para instalar la app en PC, haz clic en el ícono de instalación (ordenador con flecha) ubicado al lado de la estrella en la barra de direcciones superior de Chrome.");
+            }
+        });
+    }
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("Service Worker registrado con éxito."))
+                .catch((err) => console.log("Error al registrar Service Worker:", err));
+        });
+    }
 </script>
 </body>
 </html>
