@@ -273,21 +273,28 @@
     let deferredPrompt;
     const btnInstalar = document.getElementById('btnInstalar');
 
-    // Captura el evento nativo si el navegador lo permite
+    // Detectar si el usuario está en un dispositivo iOS (iPhone / iPad)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    // Mostrar siempre el botón para que esté disponible
+    if (btnInstalar) {
+        btnInstalar.style.display = 'flex';
+    }
+
+    // Capturar el evento nativo si el navegador lo soporta (Android / Chrome PC)
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        if (btnInstalar) {
-            btnInstalar.style.display = 'flex';
-        }
     });
 
-    // MODO PRUEBA: Forzar el despliegue del botón siempre para desarrollo
+    // Acción al hacer clic en el botón de instalar
     if (btnInstalar) {
-        btnInstalar.style.display = 'flex';
-        
         btnInstalar.addEventListener('click', async () => {
-            if (deferredPrompt) {
+            if (isIOS) {
+                // Guía específica para iPhone / Safari
+                alert("Para instalar la app en tu iPhone:\n\n1. Toca el botón de 'Compartir' ⎋ ubicado en la barra inferior de Safari.\n2. Busca y selecciona la opción 'Agregar a Inicio' ➕.");
+            } else if (deferredPrompt) {
+                // Instalación nativa automática
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
@@ -295,7 +302,8 @@
                 }
                 deferredPrompt = null;
             } else {
-                alert("Para instalar la app en PC, haz clic en el ícono de instalación (ordenador con flecha) ubicado al lado de la estrella en la barra de direcciones superior de Chrome.");
+                // Guía para PC / otros navegadores
+                alert("Para instalar la app en PC, haz clic en el ícono de instalación (ordenador con flecha o un '+') ubicado en la barra de direcciones superior de tu navegador.");
             }
         });
     }
